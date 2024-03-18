@@ -21,14 +21,12 @@ options.add_extension('urban.crx')
 options.add_experimental_option("detach", True)
 user_agent = get_random_user_agent()
 options.add_argument(f"user-agent={user_agent}")
-options.add_argument("--headless=new")
+# options.add_argument("--headless=new")
 driver = webdriver.Chrome(options=options)
 driver.get("chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/popup/index.html#/welcome-consent")
 driver.maximize_window()
 
 def vpn_proccess(driver):
-    user_agent = get_random_user_agent()
-    options.add_argument(f"user-agent={user_agent}")
     driver.switch_to.window(driver.window_handles[0])
     a = '/html/body/div/div/div[3]/div[2]/div/div[1]/input'
     b = '/html/body/div/div/div[3]/div[2]/div/div[2]/div/ul/li[1]'
@@ -80,6 +78,7 @@ def clickby_id(driver,id):
     try:
         driver.find_element(By.ID, id).click()
     except:
+        driver.execute_script("window.scrollTo(0, 2);")
         clickby_id(driver,id)
     
 def clickby_xpath(driver,path):
