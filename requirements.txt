@@ -1,4 +1,3 @@
 selenium
 fake-useragent
-subprocess
 #pip install -r requirements.txt
