@@ -6,10 +6,12 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 from random import randint, choice
 from fake_useragent import UserAgent
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+
+current_user_agent = None
+
 urls = ['https://exurl.in/976RGSbH','https://exurl.in/UDjgt','https://exurl.in/UZ0aCBW','https://exurl.in/ju1G03','https://exurl.in/DULKlhky','https://exurl.in/9jhQJ','https://exurl.in/nxQoRZzX','https://exurl.in/sQcD']
 
+DEFAULT_FILENAME = 'user_agents.txt'
 
 def get_random_user_agent():
     ua = UserAgent()
@@ -21,12 +23,15 @@ options.add_extension('urban.crx')
 options.add_experimental_option("detach", True)
 user_agent = get_random_user_agent()
 options.add_argument(f"user-agent={user_agent}")
-# options.add_argument("--headless=new")
+options.add_argument("--headless=new")
+options.add_argument('--ignore-certificate-errors')
 driver = webdriver.Chrome(options=options)
 driver.get("chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/popup/index.html#/welcome-consent")
 driver.maximize_window()
 
 def vpn_proccess(driver):
+    user_agent = get_random_user_agent()
+    options.add_argument(f"user-agent={user_agent}")
     driver.switch_to.window(driver.window_handles[0])
     a = '/html/body/div/div/div[3]/div[2]/div/div[1]/input'
     b = '/html/body/div/div/div[3]/div[2]/div/div[2]/div/ul/li[1]'
@@ -39,6 +44,7 @@ def vpn_proccess(driver):
 def google_page(driver):
     btn1 = '//*[@id="rso"]/div[1]/div/div/div[1]/div/div/span/a/h3'
     btn2 = '//*[@id="main"]/div[3]/div/div[1]/a/div/div[1]/h3/div'
+    btn3 = '//*[@id="rso"]/div[1]/div/div/div[1]/div/div/span/a/h3'
     try:
         driver.find_element(By.XPATH,btn1).click()
     except:
@@ -67,25 +73,29 @@ def start(driver):
     print(url)
     driver.get(url)
     sleep(8)
-    # btn = '//*[@id="main"]/div[3]/div/div[1]/a/div/div[1]/h3/div'
-    # driver.get('https://battlechamp.in/')
     google_page(driver)
     print('started')
     sleep(1)
     process(driver)
 
-def clickby_id(driver,id):
+def clickby_id(driver, id, attempts=5):
+    if attempts == 0:
+        driver.quit()
+        return  # Exit if attempts exhausted
     try:
         driver.find_element(By.ID, id).click()
     except:
-        driver.execute_script("window.scrollTo(0, 2);")
-        clickby_id(driver,id)
+        clickby_id(driver, id, attempts-1) 
     
-def clickby_xpath(driver,path):
+def clickby_xpath(driver, path, attempts=5):
+    if attempts == 0:
+        driver.quit()
+        return  # Exit if attempts exhausted
     try:
-        driver.find_element(By.XPATH,path).click()
+        driver.find_element(By.XPATH, path).click()
     except:
-        clickby_xpath(driver,path)
+        sleep(1)
+        clickby_xpath(driver, path, attempts-1)
 
 def process(driver):
     # verify
@@ -111,14 +121,11 @@ def process(driver):
     #  2 continue
     clickby_id(driver,"btn6")
     print("2- continue")
-    sleep(20)
+    sleep(16)
 
     clickby_xpath(driver,'//*[@id="container"]/section[2]/div/div/section/div/div/div/div/div[8]/center[3]/div/a')
     print("Over")
     sleep(3)
     driver.quit()
     
-    
-    
-
 vpn(driver)
