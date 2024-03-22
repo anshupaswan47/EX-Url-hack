@@ -17,7 +17,7 @@ def run_main_infinite():
                   ########## Error  : {e}   #######
                   ###############################
                   ''')
-            subprocess.run(['python', 'exurl.py'], check=True)
+            subprocess.run(['python', 'main.py'], check=True)
             i += 1
             
         except subprocess.CalledProcessError as err:
